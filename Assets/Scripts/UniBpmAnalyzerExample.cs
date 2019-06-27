@@ -9,8 +9,21 @@ using UnityEngine;
 
 public class UniBpmAnalyzerExample : MonoBehaviour
 {
-    [SerializeField]
-    private AudioClip targetClip;
+    public AudioClip targetClip;
+
+    public static UniBpmAnalyzerExample instance;
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+
+            return;
+        }
+
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     private void Start()
     {
