@@ -11,6 +11,8 @@ public class UniBpmAnalyzerExample : MonoBehaviour
 {
     public AudioClip targetClip;
 
+    public int CurrentClipBPM { get; private set; }
+
     public static UniBpmAnalyzerExample instance;
     private void Awake()
     {
@@ -27,8 +29,8 @@ public class UniBpmAnalyzerExample : MonoBehaviour
 
     private void Start()
     {
-        int bpm = UniBpmAnalyzer.AnalyzeBpm(targetClip);
-        if (bpm < 0)
+        CurrentClipBPM = UniBpmAnalyzer.AnalyzeBpm(targetClip);
+        if (CurrentClipBPM < 0)
         {
             Debug.LogError("AudioClip is null.");
             return;

@@ -8,46 +8,28 @@ public class Metronome : MonoBehaviour
      * if 60bpm is 1 beat per second (60 / 60 = 1) then, 60/songBPM = interval between beats.*/
     [SerializeField] private AudioClip metronomeSound;
 
-    private float songBPM;
     private float callBeat;
     private float timeOfPress;
     private bool  songStarted;
 
-    public float SongBeat
-    {
-        get
-        {
-            return 60 / songBPM;
-        }
-
-        set
-        {
-            songBPM = value;
-        }
-    }
-
     private void Start()
     {
-        ResetSongBeat();
-        songStarted = false;
-    }
-
-    public void ResetSongBeat()
-    {
         callBeat = 0;
+        songStarted = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         CheckForInput();
-        callBeat += Time.deltaTime;
-        if (callBeat > SongBeat)
+        if (callBeat >= 60 / UniBpmAnalyzerExample.instance.CurrentClipBPM)
         {
             PlayMetronomeSound();
             callBeat = 0;
             OnBeat();
         }
+        else
+            callBeat += Time.deltaTime;
     }
 
     private void PlayMetronomeSound()
@@ -73,11 +55,13 @@ public class Metronome : MonoBehaviour
         if (Input.touches.Length > 0)
         {
             timeOfPress = Time.time;
+            songStarted = true;
         }
 #else
         if (Input.GetButtonDown("Jump"))
         {
             timeOfPress = Time.time;
+            songStarted = true;
         }
 #endif
     }

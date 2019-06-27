@@ -49,6 +49,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateBeatOffset(float timeOffset)
     {
+        if (timeBeat == null) return;
         if (Mathf.Abs(timeOffset) > 0.01f)
         {
             // write in some red text the offset
