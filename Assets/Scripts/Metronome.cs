@@ -67,7 +67,7 @@ public class Metronome : MonoBehaviour
             beatTimeOffset = Time.time - timeOfPress;
             beatTimeOffset -= songBPM / 2;
 
-            if (Mathf.Abs(lastBeatOffset - beatTimeOffset) < 0.01f)
+            if (Mathf.Abs(lastBeatOffset - beatTimeOffset) < 0.1f)
             {
                 combo++;
             }
