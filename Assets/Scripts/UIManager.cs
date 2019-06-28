@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] private Animator        menuSlide;
     [SerializeField] private TextMeshProUGUI timeBeat;
+    [SerializeField] private AudioClip       menuSound;
 
     private int currentMenu;
 
@@ -32,6 +33,7 @@ public class UIManager : MonoBehaviour
     {
         if (currentMenu == 0) return;
         menuSlide.SetTrigger("Back");
+        AudioManager.instance.PlaySound(menuSound, 0.1f, 1);
         currentMenu = 0;
     }
 
@@ -39,6 +41,7 @@ public class UIManager : MonoBehaviour
     {
         if (currentMenu == 1) return;
         menuSlide.SetTrigger("PickSongMenu");
+        AudioManager.instance.PlaySound(menuSound, 0.1f, 1);
         currentMenu = 1;
     }
 

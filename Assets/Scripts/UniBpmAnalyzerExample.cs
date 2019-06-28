@@ -13,27 +13,18 @@ public class UniBpmAnalyzerExample : MonoBehaviour
 
     public int CurrentClipBPM { get; private set; }
 
-    public static UniBpmAnalyzerExample instance;
-    private void Awake()
-    {
-        if (instance != null)
-        {
-            Destroy(gameObject);
-
-            return;
-        }
-
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
+    private Metronome metronome;
 
     private void Start()
     {
         CurrentClipBPM = UniBpmAnalyzer.AnalyzeBpm(targetClip);
-        if (CurrentClipBPM < 0)
+        if (CurrentClipBPM <= 0)
         {
             Debug.LogError("AudioClip is null.");
             return;
         }
+
+        metronome = GetComponent<Metronome>();
+        metronome.StartBeat(CurrentClipBPM);
     }
 }
