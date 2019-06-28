@@ -9,6 +9,6 @@ public class ComboText : MonoBehaviour
 
     public void SetCombo(int combo)
     {
-        text.text = combo.ToString();
+        text.text = "x" + combo.ToString();
     }
 }
