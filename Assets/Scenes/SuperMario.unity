@@ -813,4 +813,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   metronomeSound: {fileID: 8300000, guid: 46be501288a772a4fb93a7f5a1876993, type: 3}
-  targetClip: {fileID: 8300000, guid: 4fe1d4c9875107840bd1d3cd7be3eb09, type: 3}
+  targetClip: {fileID: 8300000, guid: da42c7bd45526f94ab83d237cf47b613, type: 3}

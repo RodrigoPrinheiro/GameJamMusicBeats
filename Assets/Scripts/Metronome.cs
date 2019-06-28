@@ -1,17 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class Metronome : MonoBehaviour
 {
     /*In order to make a metronome you need the number of beats each second
      * if 60bpm is 1 beat per second (60 / 60 = 1) then, 60/songBPM = interval between beats.*/
     [SerializeField] private AudioClip metronomeSound;
+    public AudioClip targetClip;
+    public UnityEvent updateCombo;
 
     private float timeOfPress;
     private bool  songStarted;
     private float songBPM;
     private bool  firstInputTaken;
+
+    private int currentBPM;
+
+    float beatTimeOffset;
+    float lastBeatOffset;
+    public int combo;
+    private void Start()
+    {
+        currentBPM = UniBpmAnalyzer.AnalyzeBpm(targetClip);
+        if (currentBPM <= 0)
+        {
+            Debug.LogError("AudioClip is null.");
+            return;
+        }
+        StartBeat(currentBPM);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -24,6 +43,7 @@ public class Metronome : MonoBehaviour
         songStarted = false;
         songBPM = (60f / BPM);
         StartCoroutine(PlayBeatCoroutine());
+        AudioManager.instance.PlaySound(targetClip);
     }
 
     public void StopBeat()
@@ -33,20 +53,37 @@ public class Metronome : MonoBehaviour
 
     private void OnBeat()
     {
-        firstInputTaken = false;
+        if (!firstInputTaken)
+        {
+            GameUI.instance.UpdateOffBeatText(songBPM);
+        }
+        else
+        {
+            firstInputTaken = false;
 
-        // Get the pressed time offset
-        float beatTimeOffset;
-        beatTimeOffset = Time.time - timeOfPress;
+            lastBeatOffset = beatTimeOffset;
 
-        // Send information to UI with the value of the offset
-        GameUI.instance.UpdateOffBeatText(beatTimeOffset);
+            // Get the pressed time offset
+            beatTimeOffset = Time.time - timeOfPress;
+            beatTimeOffset -= songBPM / 2;
+
+            if (Mathf.Abs(lastBeatOffset - beatTimeOffset) < 0.01f)
+            {
+                combo++;
+            }
+            else
+                combo = 0;
+
+            updateCombo.Invoke();
+            // Send information to UI with the value of the offset
+            GameUI.instance.UpdateOffBeatText(beatTimeOffset);
+        }
     }
 
     private void CheckForInput()
     {
-        Debug.Log(firstInputTaken);
         if (firstInputTaken) return;
+
         // beat stuff, check if player tapped on the screen
 #if (UNITY_ANDROID)
         if (Input.touches.Length > 0)
@@ -54,7 +91,6 @@ public class Metronome : MonoBehaviour
             timeOfPress = Time.time;
             songStarted = true;
             firstInputTaken = true;
-
         }
 #else
         if (Input.GetButtonDown("Jump") || Input.GetButtonDown("Fire1"))
@@ -68,12 +104,23 @@ public class Metronome : MonoBehaviour
 
     private IEnumerator PlayBeatCoroutine()
     {
+        float time = 0;
         while (true)
         {
+            while (time < songBPM + songBPM / 2)
+            {
+                time += Time.deltaTime;
+                yield return null;
+            }
+
+            time -= songBPM;
+            if (songStarted)
+            {
+                OnBeat();
+            }
+
             if (!songStarted)
                 AudioManager.instance.PlaySound(metronomeSound, 0.5f, 1);
-            OnBeat();
-            yield return new WaitForSeconds(songBPM);
         }
     }
 }

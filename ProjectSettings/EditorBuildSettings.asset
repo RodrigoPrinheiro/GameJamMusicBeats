@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ACDC-TNT.unity
     guid: 0172e0e75685a794abab740b25b004a0
+  - enabled: 1
+    path: Assets/Scenes/SuperMario.unity
+    guid: 9bdd8b339485ab24c937aaa0ede0e676
   m_configObjects: {}
