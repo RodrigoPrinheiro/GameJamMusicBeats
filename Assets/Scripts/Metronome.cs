@@ -11,18 +11,16 @@ public class Metronome : MonoBehaviour
     private float timeOfPress;
     private bool  songStarted;
     private float songBPM;
-
+    private bool  firstInputTaken;
     // Update is called once per frame
     void Update()
     {
-        if (songBPM == 0)
-        {
-        }
         CheckForInput();
     }
 
     public void StartBeat(float BPM)
     {
+        firstInputTaken = false;
         songStarted = false;
         songBPM = (60f / BPM);
         StartCoroutine(PlayBeatCoroutine());
@@ -32,30 +30,38 @@ public class Metronome : MonoBehaviour
     {
         StopCoroutine(PlayBeatCoroutine());
     }
+
     private void OnBeat()
     {
+        firstInputTaken = false;
+
         // Get the pressed time offset
         float beatTimeOffset;
-        beatTimeOffset = timeOfPress - Time.time;
+        beatTimeOffset = Time.time - timeOfPress;
 
         // Send information to UI with the value of the offset
-        UIManager.instance.UpdateBeatOffset(beatTimeOffset);
+        GameUI.instance.UpdateOffBeatText(beatTimeOffset);
     }
 
     private void CheckForInput()
     {
+        Debug.Log(firstInputTaken);
+        if (firstInputTaken) return;
         // beat stuff, check if player tapped on the screen
 #if (UNITY_ANDROID)
         if (Input.touches.Length > 0)
         {
             timeOfPress = Time.time;
             songStarted = true;
+            firstInputTaken = true;
+
         }
 #else
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") || Input.GetButtonDown("Fire1"))
         {
             timeOfPress = Time.time;
             songStarted = true;
+            firstInputTaken = true;
         }
 #endif
     }
@@ -64,7 +70,6 @@ public class Metronome : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log((songBPM).ToString());
             if (!songStarted)
                 AudioManager.instance.PlaySound(metronomeSound, 0.5f, 1);
             OnBeat();
